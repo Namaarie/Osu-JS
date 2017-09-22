@@ -8,5 +8,5 @@ function setup() {
 
 // DRAW FUNCTION - Loops @ 60FPS by default
 function draw() {
-    if()
+    console.log("test");
 }
