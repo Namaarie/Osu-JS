@@ -11,9 +11,12 @@ function draw() {
 	fill(note.color);
 	ellipse(note.x,note.y,note.w,note.h);
 
-	if(dist(mouseX,mouseY,note.x,note,y) > 25){
+	if(dist(mouseX,mouseY,note.x,note.y) < 25){
 		note.w = 50;
 		note.h = 50;
+	}else{
+		note.w = 25;
+		note.h = 25;
 	}
 }
 
