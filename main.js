@@ -1,30 +1,53 @@
-var note;
+var noteSprite;
+var allNotes = [];
 
+function preload(){
+	//Loades note image
+	noteSprite = loadImage("assets/hitcircle.png");
+}
 function setup() {
 	createCanvas(800, 600);
-	note = new Note();
+	//Creates 10 notes
+	for(i = 0; i < 10; i++){
+		allNotes.push(new Note());
+	}
 }
 
 function draw() {
 	background("white");
-	noStroke();
-	fill(note.color);
-	ellipse(note.x,note.y,note.w,note.h);
-
-	if(dist(mouseX,mouseY,note.x,note.y) < 25){
-		note.w = 50;
-		note.h = 50;
-	}else{
-		note.w = 25;
-		note.h = 25;
+	//Updates all current notes
+	for(i = 0; i < allNotes.length; i++){
+		allNotes[i].Render();
+		allNotes[i].Update();
 	}
 }
 
 //Note Object
 function Note(){
-	this.x = width/2;
-	this.y = height/2;
+	this.x = random(width);
+	this.y = random(height);
 	this.w = 25;
 	this.h = 25;
-	this.color = color(255,125,125);
+	this.color = color(random(255),random(255),random(255));
+
+	//Function to draw note
+	this.Render = function(){
+		//Changes image anchor to center
+		imageMode(CENTER);
+		//Tints note color
+		tint(this.color);
+		//Draws the note
+		image(noteSprite, this.x,this.y,this.w,this.h);
+	}
+
+	//Function to detect if mouse is over note
+	this.Update = function(){
+		if(dist(mouseX,mouseY,this.x,this.y) < this.w/2){
+			this.w = 50;
+			this.h = 50;
+		}else{
+			this.w = 25;
+			this.h = 25;
+		}
+	}
 }
