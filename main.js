@@ -5,8 +5,9 @@ var allNotes = [];
 
 //values
 var cursorSize;
+
 function preload(){
-	//Loads images
+	//Loads images;
 	noteSprite = loadImage("assets/hitcircle.png");
 	cursor = loadImage("assets/cursor.png");
 }
