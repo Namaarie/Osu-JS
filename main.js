@@ -16,7 +16,6 @@ function preload(){
 }
 
 function setup() {
-	fullscreen();
 	createCanvas(innerWidth, innerHeight);
 	frameRate(120);
 	noCursor();
@@ -30,6 +29,9 @@ function setup() {
 }
 
 function draw() {
+	if(width != innerWidth || height != innerHeight){
+		resizeCanvas(innerWidth, innerHeight);
+	}
 	background(50);
 	//Updates all current notes
 	for(i = 0; i < allNotes.length; i++){
