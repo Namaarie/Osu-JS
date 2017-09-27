@@ -14,12 +14,13 @@ function preload(){
 	//Loads images;
 	noteSprite = loadImage("assets/hitcircle.png");
 	noteRing = loadImage("assets/hitcirclering.png")
-	approachCircle = loadImage("assets/approachCircle.png");
+	approachCircle = loadImage("assets/approachcircle.png");
 	cursor = loadImage("assets/cursor.png");
 }
 
 function setup() {
-	createCanvas(800, 800);
+	fullscreen();
+	createCanvas(innerWidth, innerHeight);
 	frameRate(120);
 	noCursor();
 	cursorSize = 100;
@@ -38,17 +39,17 @@ function draw() {
 		allNotes[i].Render();
 		allNotes[i].Update();
 		if(allNotes[i+1] != null){
-			line(allNotes[i].x, allNotes[i].y, allNotes[i+1].x, allNotes[i+1].y);
+			if(allNotes[i].destroyed == false && allNotes[i+1].destroyed == false){
+				line(allNotes[i].x, allNotes[i].y, allNotes[i+1].x, allNotes[i+1].y);
+			}
 		}
 	}
 	//Updates cursor
 	UpdateCursor();
 
-	if(noteCreation >= 10){
-		for(i = 0; i < 1; i++){
-			noteCreation = 0;
-			allNotes.push(new Note());
-		}
+	if(noteCreation >= 40){
+		noteCreation = 0;
+		allNotes.push(new Note());
 	}
 	noteCreation++;
 }
@@ -69,6 +70,7 @@ function Note(){
 	this.approachCircle = 200;
 	this.color = color(random(255),random(255),random(255));
 	this.beenClicked = false;
+	this.destroyed = false;
 
 	//Function to draw note
 	this.Render = function(){
@@ -105,35 +107,37 @@ function Note(){
 	//Change circle to hit
 	this.Hit = function(){
 		this.beenClicked = true;
-		for(i = 0; i < allNotes.length; i++){
-			if(allNotes[i].beenClicked == true){
-				this.HitAccuracy();
-				//allNotes[i] = new Note();
-			}
-		}
+		this.HitAccuracy();
+
+		//allNotes[i] = new Note();
 	}
 
 	this.HitAccuracy = function(){
-		if(this.approachCircle <= 110 && this.approachCircle > 100){
-			//300
-			console.log("300");
-			return;
-		}else if(this.approachCircle <= 130 && this.approachCircle > 110){
-			//100
-			console.log("100");
-			return;
-		}else if(this.approachCircle <= 150 && this.approachCircle > 130){
-			//50
-			console.log("50");
-			return;
-		}else{
-			//Miss
-			console.log("Miss");
-			return;
+		if(this.destroyed == false){
+			if(this.approachCircle <= 110 && this.approachCircle > 100){
+				//300
+				console.log("300");
+				this.destroyed = true;
+				return;
+			}else if(this.approachCircle <= 130 && this.approachCircle > 110){
+				//100
+				console.log("100");
+				this.destroyed = true;
+				return;
+			}else if(this.approachCircle <= 150 && this.approachCircle > 130){
+				//50
+				console.log("50");
+				this.destroyed = true;
+				return;
+			}else{
+				//Miss
+				console.log("Miss");
+				this.destroyed = true;
+				return;
+				}
+			}
 		}
 	}
-
-}
 
 function mousePressed(){
 	for(i = 0; i < allNotes.length; i++){
