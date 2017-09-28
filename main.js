@@ -156,3 +156,13 @@ function mousePressed(){
 		}
 	}
 }
+
+function keyPressed(){
+	if(keyCode == 88 || keyCode == 90){
+		for(i = 0; i < allNotes.length; i++){
+			if(allNotes[i].CheckDistance() == true){
+				allNotes[i].Hit();
+			}
+		}
+	}
+}
