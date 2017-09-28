@@ -7,6 +7,8 @@ var allNotes = [];
 //values
 var cursorSize;
 var noteCreation;
+var score;
+var combo;
 
 function preload(){
 	//Loads images;
@@ -21,6 +23,8 @@ function setup() {
 	noCursor();
 	cursorSize = 100;
 	noteCreation = 10;
+	score = 0;
+	combo = 0;
 
 	//Creates notes
 	for(i = 0; i < 1; i++){
@@ -51,6 +55,13 @@ function draw() {
 		allNotes.push(new Note());
 	}
 	noteCreation++;
+
+	fill(255);
+	textSize(40);
+	textAlign(RIGHT, TOP);
+	text(score, innerWidth - 50, 50);
+	textAlign(LEFT, BOTTOM);
+	text(combo, 50, innerHeight - 50);
 }
 
 //Changes cursor to custom cursor
@@ -62,8 +73,8 @@ function UpdateCursor(){
 
 //Note Object
 function Note(){
-	this.x = random(width);
-	this.y = random(height);
+	this.x = random(100, width - 100);
+	this.y = random(100, height - 100);
 	this.w = 100;
 	this.h = 100;
 	this.approachCircle = 200;
@@ -126,21 +137,28 @@ function Note(){
 		if(this.destroyed == false){
 			if(this.approachCircle <= 110 && this.approachCircle > 100){
 				//300
+				combo ++;
+				score += combo * 300;
 				this.noteSprite = loadImage("assets/hit300.png");
 				this.destroyed = true;
 				return;
 			}else if(this.approachCircle <= 130 && this.approachCircle > 110){
 				//100
+				combo ++;
+				score += combo * 100;
 				this.noteSprite = loadImage("assets/hit100.png");
 				this.destroyed = true;
 				return;
 			}else if(this.approachCircle <= 150 && this.approachCircle > 130){
 				//50
+				combo ++;
+				score += combo * 50;
 				this.noteSprite = loadImage("assets/hit50.png");
 				this.destroyed = true;
 				return;
 			}else{
 				//Miss
+				combo = 0;
 				this.noteSprite = loadImage("assets/hit0.png");
 				this.destroyed = true;
 				return;
