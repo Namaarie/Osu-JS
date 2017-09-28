@@ -1,6 +1,7 @@
 //Objects
 var noteRing;
 var cursor;
+var cursorAI;
 var approachCircle;
 var allNotes = [];
 
@@ -9,12 +10,18 @@ var cursorSize;
 var noteCreation;
 var score;
 var combo;
+var aiX;
+var aiY;
+var aiPos;
+var aiTranX;
+var aiTranY;
 
 function preload(){
 	//Loads images;
 	noteRing = loadImage("assets/hitcirclering.png")
 	approachCircle = loadImage("assets/approachcircle.png");
 	cursor = loadImage("assets/cursor.png");
+	cursorAI = loadImage("assets/cursor.png");
 }
 
 function setup() {
@@ -25,11 +32,15 @@ function setup() {
 	noteCreation = 10;
 	score = 0;
 	combo = 0;
+	aiX = 0;
+	aiY = 0;
+	aiPos = 0;
 
 	//Creates notes
 	for(i = 0; i < 1; i++){
 		allNotes.push(new Note());
 	}
+
 }
 
 function draw() {
@@ -49,8 +60,9 @@ function draw() {
 	}
 	//Updates cursor
 	UpdateCursor();
+	AI();
 
-	if(noteCreation >= 40){
+	if(noteCreation >= 10){
 		noteCreation = 0;
 		allNotes.push(new Note());
 	}
@@ -62,6 +74,15 @@ function draw() {
 	text(score, innerWidth - 50, 50);
 	textAlign(LEFT, BOTTOM);
 	text(combo, 50, innerHeight - 50);
+
+	aiTranY = allNotes[aiPos].y - aiY;
+	aiTranX = allNotes[aiPos].x - aiX;
+	aiX = allNotes[aiPos].x;
+	aiY = allNotes[aiPos].y;
+	if(allNotes[aiPos].approachCircle <= 110){
+		allNotes[aiPos].Hit();
+		aiPos++;
+	}
 }
 
 //Changes cursor to custom cursor
@@ -69,6 +90,12 @@ function UpdateCursor(){
 	tint(255);
 	imageMode(CENTER);
 	image(cursor,mouseX,mouseY,cursorSize,cursorSize);
+}
+
+function AI(){
+	tint(255);
+	imageMode(CENTER);
+	image(cursorAI, aiX, aiY, 100, 100);
 }
 
 //Note Object
