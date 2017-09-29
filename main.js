@@ -136,7 +136,7 @@ function Note(){
 			image(approachCircle, this.x, this.y, this.approachCircle, this.approachCircle);
 		}else if(this.destroyed == true){
 			if(this.scoreTimer <= 60){
-				//tint(255, 255, 255, -4*this.scoreTimer+255); //THIS IS A FPS KILLER BUT IT LOOKS COOL
+				tint(255, 255, 255, -4*this.scoreTimer+255);
 				image(this.noteSprite, this.x,this.y,this.w * 2,this.h * 2);
 			}
 		}
