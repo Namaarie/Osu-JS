@@ -10,11 +10,14 @@ var cursorSize;
 var noteCreation;
 var score;
 var combo;
+var noteCreationSpeed;
+var enableAI;
+var appraochRate;
+
+//AI variables
 var aiX;
 var aiY;
 var aiPos;
-var aiTranX;
-var aiTranY;
 
 function preload(){
 	//Loads images;
@@ -28,19 +31,18 @@ function setup() {
 	createCanvas(innerWidth, innerHeight);
 	frameRate(120);
 	noCursor();
+	appraochRate = 3;
 	cursorSize = 100;
 	noteCreation = 10;
+	noteCreationSpeed = 10;
+	enableAI = false;
 	score = 0;
 	combo = 0;
 	aiX = 0;
 	aiY = 0;
 	aiPos = 0;
 
-	//Creates notes
-	for(i = 0; i < 1; i++){
-		allNotes.push(new Note());
-	}
-
+	allNotes.push(new Note());
 }
 
 function draw() {
@@ -54,6 +56,8 @@ function draw() {
 		allNotes[i].Update();
 		if(allNotes[i+1] != null){
 			if(allNotes[i].destroyed == false && allNotes[i+1].destroyed == false){
+				stroke(0);
+				strokeWeight(5);
 				line(allNotes[i].x, allNotes[i].y, allNotes[i+1].x, allNotes[i+1].y);
 			}
 		}
@@ -62,7 +66,7 @@ function draw() {
 	UpdateCursor();
 	AI();
 
-	if(noteCreation >= 10){
+	if(noteCreation >= noteCreationSpeed){
 		noteCreation = 0;
 		allNotes.push(new Note());
 	}
@@ -74,28 +78,36 @@ function draw() {
 	text(score, innerWidth - 50, 50);
 	textAlign(LEFT, BOTTOM);
 	text(combo, 50, innerHeight - 50);
-
-	aiTranY = allNotes[aiPos].y - aiY;
-	aiTranX = allNotes[aiPos].x - aiX;
-	aiX = allNotes[aiPos].x;
-	aiY = allNotes[aiPos].y;
-	if(allNotes[aiPos].approachCircle <= 110){
-		allNotes[aiPos].Hit();
-		aiPos++;
-	}
 }
 
 //Changes cursor to custom cursor
 function UpdateCursor(){
 	tint(255);
 	imageMode(CENTER);
-	image(cursor,mouseX,mouseY,cursorSize,cursorSize);
+	if(enableAI == false){
+		image(cursor,mouseX,mouseY,cursorSize,cursorSize);
+	}
 }
 
 function AI(){
 	tint(255);
 	imageMode(CENTER);
-	image(cursorAI, aiX, aiY, 100, 100);
+	if(enableAI == true){
+		image(cursorAI, aiX, aiY, 100, 100);
+	}
+	if(allNotes[aiPos] != null){
+		var speed = (noteCreationSpeed - 73.75) / -137.5;
+		speed = Limit(speed, 0.1, 0.5);
+		console.log(speed);
+		aiX = lerp(aiX, allNotes[aiPos].x, speed);
+		aiY = lerp(aiY, allNotes[aiPos].y, speed);
+		if(allNotes[aiPos].approachCircle <= 110){
+			if(enableAI == true){
+				allNotes[aiPos].Hit();
+			}
+			aiPos++;
+		}
+	}
 }
 
 //Note Object
@@ -125,7 +137,7 @@ function Note(){
 			image(approachCircle, this.x, this.y, this.approachCircle, this.approachCircle);
 		}else if(this.destroyed == true){
 			if(this.scoreTimer <= 60){
-
+				//tint(255, 255, 255, -4*this.scoreTimer+255); //THIS IS A FPS KILLER BUT IT LOOKS COOL
 				image(this.noteSprite, this.x,this.y,this.w * 2,this.h * 2);
 			}
 		}
@@ -133,7 +145,7 @@ function Note(){
 
 	//Updates 60 times per second
 	this.Update = function(){
-		this.approachCircle --;
+		this.approachCircle -= appraochRate;
 		if(this.destroyed == true){
 			this.scoreTimer++;
 		}
@@ -156,8 +168,6 @@ function Note(){
 	this.Hit = function(){
 		this.beenClicked = true;
 		this.HitAccuracy();
-
-		//allNotes[i] = new Note();
 	}
 
 	this.HitAccuracy = function(){
@@ -210,4 +220,41 @@ function keyPressed(){
 			}
 		}
 	}
+
+	if(keyCode == 32){
+		enableAI = !enableAI;
+	}
+
+	if(keyCode == 189){
+		noteCreationSpeed++;
+		noteCreationSpeed = Limit(noteCreationSpeed, 1, 60);
+		appraochRate = -0.04 * noteCreationSpeed + 3.4;
+		appraochRate = Limit(appraochRate, 1, 3);
+	}
+	if(keyCode == 187){
+		noteCreationSpeed--;
+		noteCreationSpeed = Limit(noteCreationSpeed, 1, 60);
+		appraochRate = -0.04 * noteCreationSpeed + 3.4;
+		appraochRate = Limit(appraochRate, 1, 3);
+	}
+}
+
+function Limit(target, min, max){
+	if(target > max){
+		target = max;
+	}else if (target < min){
+		target = min;
+	}
+	return target;
+}
+
+//Lerp
+function lerp(a, b, t) {
+    var len = a.length;
+    if(b.length != len) return;
+
+    var x = [];
+    for(var i = 0; i < len; i++)
+        x.push(a[i] + t * (b[i] - a[i]));
+    return x;
 }
