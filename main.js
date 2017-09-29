@@ -98,7 +98,6 @@ function AI(){
 	if(allNotes[aiPos] != null){
 		var speed = (noteCreationSpeed - 73.75) / -137.5;
 		speed = Limit(speed, 0.1, 0.5);
-		console.log(speed);
 		aiX = lerp(aiX, allNotes[aiPos].x, speed);
 		aiY = lerp(aiY, allNotes[aiPos].y, speed);
 		if(allNotes[aiPos].approachCircle <= 110){
